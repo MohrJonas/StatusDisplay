@@ -1,5 +1,4 @@
 # User-specific stuff
-.idea/
 
 *.iml
 *.ipr
@@ -116,6 +115,3 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
-!.idea/runConfigurations/Minecraft_Client.xml
-!.idea/runConfigurations/Minecraft_Server.xml
-!.idea/runConfigurations/StatusDisplay_build.xml
