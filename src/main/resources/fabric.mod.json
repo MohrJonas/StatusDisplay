@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "StatusDisplay",
+	"id": "status_display",
 	"version": "${version}",
 	"name": "StatusDisplay",
 	"description": "Show a customizable status for each player in-game",
