@@ -1,8 +1,5 @@
 package com.github.nastygamer.statusdisplay;
 
-import net.minecraft.stat.Stat;
-import net.minecraft.text.TextColor;
-
 public class AfkStatus implements Status {
 
 	@Override

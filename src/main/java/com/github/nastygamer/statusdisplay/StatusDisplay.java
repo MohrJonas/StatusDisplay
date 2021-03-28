@@ -7,6 +7,9 @@ import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -19,6 +22,11 @@ public class StatusDisplay implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		System.out.println("Hello from StatusDisplay");
+		try {
+			System.out.println(new File(StatusDisplay.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			dispatcher.register(
 					literal("status")
