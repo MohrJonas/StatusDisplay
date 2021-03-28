@@ -37,9 +37,9 @@ public class StatusDisplay implements ModInitializer {
 		final String teamColorCommand = String.format("team modify %s color %s", status.getName(), status.getColor());
 		final String teamPrefixCommand = String.format("team modify %s prefix {\"text\": \"%s \"}", status.getName(), status.getPrefix());
 		final String teamJoinCommand = String.format("team join %s %s", status.getName(), player.getName().asString());
-		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource(), teamCreateCommand);
-		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource(), teamColorCommand);
-		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource(), teamPrefixCommand);
-		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource(), teamJoinCommand);
+		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), teamCreateCommand);
+		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), teamColorCommand);
+		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), teamPrefixCommand);
+		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), teamJoinCommand);
 	}
 }
