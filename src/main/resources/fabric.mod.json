@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "StatusDisplay",
+	"version": "${version}",
+	"name": "StatusDisplay",
+	"description": "Show a customizable status for each player in-game",
+	"authors": [
+		"NastyGamer",
+		"Tueftlergarage"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/StatusDisplay/icon.png",
+	"environment": "server",
+	"entrypoints": {
+		"main": [
+			"com.github.nastygamer.statusdisplay.StatusDisplay"
+		]
+	},
+	"mixins": [
+		"StatusDisplay.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.11.3",
+		"fabric": "*",
+		"minecraft": "1.16.5"
+	}
+}
