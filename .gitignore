@@ -118,3 +118,4 @@ run/
 !gradle-wrapper.jar
 !.idea/runConfigurations/Minecraft_Client.xml
 !.idea/runConfigurations/Minecraft_Server.xml
+!.idea/runConfigurations/StatusDisplay_build.xml
