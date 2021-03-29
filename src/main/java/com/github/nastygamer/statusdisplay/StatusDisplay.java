@@ -6,6 +6,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -27,7 +28,8 @@ public class StatusDisplay implements ModInitializer {
 										final Status status = registry.getStatus(context.getArgument("name", String.class));
 										if (status != null) {
 											moveIntoTeam(status, context.getSource().getPlayer(), context);
-										}
+										} else
+											sendMessage(ColorConverter.format("red", String.format("Status %s not found.", context.getArgument("name", String.class))), context.getSource().getPlayer(), context);
 										return 0;
 									}))
 			);
@@ -41,7 +43,7 @@ public class StatusDisplay implements ModInitializer {
 															context -> {
 																final Status status = registry.getStatus(context.getArgument("name", String.class));
 																if (status == null) {
-																	registry.addStatus(new Status() {
+																	final Status newStatus = new Status() {
 																		@Override
 																		public String getColor() {
 																			return context.getArgument("color", String.class);
@@ -56,8 +58,15 @@ public class StatusDisplay implements ModInitializer {
 																		public String getName() {
 																			return context.getArgument("name", String.class);
 																		}
-																	});
-																}
+																	};
+																	final ImmutablePair<Boolean, String> validateOutput = registry.validateStatus(newStatus);
+																	if (validateOutput.getLeft()) {
+																		registry.addStatus(newStatus);
+																	} else {
+																		sendMessage(ColorConverter.format("red", validateOutput.getRight()), context.getSource().getPlayer(), context);
+																	}
+																} else
+																	sendMessage(ColorConverter.format("red", String.format("Status %s already defined.", context.getArgument("name", String.class))), context.getSource().getPlayer(), context);
 																return 0;
 															}
 													)))));
@@ -65,14 +74,29 @@ public class StatusDisplay implements ModInitializer {
 			dispatcher.register(literal("statuslist").executes(context -> {
 				registry.getAll().forEach(status -> {
 					try {
-						context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), String.format("msg %s %s", context.getSource().getPlayer().getName().asString(), status.toString()));
+						sendMessage(ColorConverter.format(status.getColor(), status.toString()), context.getSource().getPlayer(), context);
 					} catch (CommandSyntaxException e) {
 						e.printStackTrace();
 					}
 				});
 				return 0;
 			}));
+			//noinspection SpellCheckingInspection
+			dispatcher.register(literal("statusremove").then(argument("name", word()).executes(context -> {
+				final Status toRemove = registry.getStatus(context.getArgument("name", String.class));
+				if (toRemove == null)
+					sendMessage(ColorConverter.format("red", String.format("No status with name %s found.", context.getArgument("name", String.class))), context.getSource().getPlayer(), context);
+				else {
+					registry.remove(toRemove);
+					sendMessage(ColorConverter.format("green", String.format("Successfully removed status %s.", context.getArgument("name", String.class))), context.getSource().getPlayer(), context);
+				}
+				return 0;
+			})));
 		});
+	}
+
+	private void sendMessage(String message, ServerPlayerEntity playerEntity, CommandContext<ServerCommandSource> context) {
+		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), String.format("msg %s %s", playerEntity.getName().asString(), message));
 	}
 
 	private void moveIntoTeam(Status status, ServerPlayerEntity player, CommandContext<ServerCommandSource> context) {

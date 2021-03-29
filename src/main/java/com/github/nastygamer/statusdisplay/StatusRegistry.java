@@ -1,7 +1,12 @@
 package com.github.nastygamer.statusdisplay;
 
-import com.eclipsesource.json.*;
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.WriterConfig;
 import net.fabricmc.loader.api.FabricLoader;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -68,7 +73,6 @@ public class StatusRegistry {
 	}
 
 	public void addStatus(Status status) {
-		if (!isValid(status)) return;
 		rootArray.add(new JsonObject() {{
 			add("name", status.getName());
 			add("color", status.getColor());
@@ -86,14 +90,52 @@ public class StatusRegistry {
 		return statuses.stream().filter(status -> status.getName().equals(name)).findFirst().orElse(null);
 	}
 
-	private boolean isValid(Status status) {
-		for (JsonValue value : rootArray) {
-			if (value.asObject().get("name").asString().equals(status.getName())) return false;
-		}
-		return true;
-	}
-
 	public ArrayList<Status> getAll() {
 		return statuses;
+	}
+
+	public ImmutablePair<Boolean, String> validateStatus(Status status) {
+		final String name = status.getName();
+		final String color = status.getColor();
+		final String prefix = status.getPrefix();
+		if (!validateName(name)) {
+			return new ImmutablePair<>(false, String.format("Invalid Name %s", name));
+		}
+		if (!validateColor(color)) {
+			return new ImmutablePair<>(false, String.format("Invalid Color %s", color));
+		}
+		if (!validatePrefix(prefix)) {
+			return new ImmutablePair<>(false, String.format("Invalid Prefix %s", prefix));
+		}
+		return new ImmutablePair<>(true, null);
+	}
+
+	public void remove(Status status) {
+		int index = 0;
+		for (int i = 0; i < rootArray.size(); i++) {
+			if (rootArray.get(i).asObject().get("name").asString().equals(status.getName())) {
+				index = i;
+				break;
+			}
+		}
+		rootArray.remove(index);
+		try {
+			writeJson();
+			loadJson();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private boolean validateName(String name) {
+		return StringUtils.isNotBlank(name) && statuses.stream().noneMatch(status -> status.getName().equals(name));
+	}
+
+	private boolean validateColor(String color) {
+		return ColorConverter.colors.contains(color);
+	}
+
+	private boolean validatePrefix(String prefix) {
+		return StringUtils.isNotBlank(prefix);
 	}
 }
