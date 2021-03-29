@@ -151,6 +151,20 @@ public class StatusDisplay implements ModInitializer {
 						return 1;
 					}
 			));
+			dispatcher.register(literal("players").executes(context -> {
+						context.getSource().getMinecraftServer().getPlayerManager().getPlayerList().forEach(pe -> {
+							final String statusName = pe.getScoreboardTeam() != null ? pe.getScoreboardTeam().getName() : null;
+							if (statusName == null) {
+								sendMessage(String.format("%s: None", pe.getName().asString()), pe, context);
+								return;
+							}
+							final Status status = registry.getStatus(statusName);
+							assert status != null;
+							sendMessage(format(status.getColor(), String.format("%s: %s", pe.getName().asString(), status.getName())), pe, context);
+						});
+						return 1;
+					}
+			));
 		});
 	}
 
@@ -183,4 +197,6 @@ public class StatusDisplay implements ModInitializer {
 			return false;
 		}
 	}
+
+
 }
