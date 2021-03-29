@@ -127,6 +127,31 @@ public class StatusRegistry {
 		}
 	}
 
+	public void modify(Status status, @Nullable String name, @Nullable String color, @Nullable String prefix) {
+		int index = 0;
+		for (int i = 0; i < rootArray.size(); i++) {
+			if (rootArray.get(i).asObject().get("name").asString().equals(status.getName())) {
+				index = i;
+				break;
+			}
+		}
+		if (name != null) {
+			rootArray.get(index).asObject().set("name", name);
+		}
+		if (color != null) {
+			rootArray.get(index).asObject().set("color", color);
+		}
+		if (prefix != null) {
+			rootArray.get(index).asObject().set("prefix", prefix);
+		}
+		try {
+			writeJson();
+			loadJson();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private boolean validateName(String name) {
 		return StringUtils.isNotBlank(name) && statuses.stream().noneMatch(status -> status.getName().equals(name));
 	}

@@ -10,6 +10,6 @@ public abstract class Status {
 
 	@Override
 	public String toString() {
-		return String.format("%s  |  %s  |  %s  |", getName(), getColor(), getPrefix());
+		return String.format(">> name: %s color: %s prefix: %s <<", getName(), getColor(), getPrefix());
 	}
 }
