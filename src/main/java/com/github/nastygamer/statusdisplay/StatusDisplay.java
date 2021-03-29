@@ -140,6 +140,17 @@ public class StatusDisplay implements ModInitializer {
 						return 0;
 					}
 			)))));
+			dispatcher.register(literal("colors").executes(context -> {
+						ColorConverter.colors.forEach(s -> {
+							try {
+								sendMessage(format(s, s), context.getSource().getPlayer(), context);
+							} catch (CommandSyntaxException e) {
+								e.printStackTrace();
+							}
+						});
+						return 1;
+					}
+			));
 		});
 	}
 
