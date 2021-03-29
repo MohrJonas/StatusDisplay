@@ -11,7 +11,6 @@ import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-
 public class StatusDisplay implements ModInitializer {
 
 	private static final String VERSION = "1.0.0";
@@ -32,6 +31,7 @@ public class StatusDisplay implements ModInitializer {
 										return 0;
 									}))
 			);
+			//noinspection SpellCheckingInspection
 			dispatcher.register(
 					literal("statusnew")
 							.then(argument("name", word())
@@ -61,6 +61,7 @@ public class StatusDisplay implements ModInitializer {
 																return 0;
 															}
 													)))));
+			//noinspection SpellCheckingInspection
 			dispatcher.register(literal("statuslist").executes(context -> {
 				registry.getAll().forEach(status -> {
 					try {
