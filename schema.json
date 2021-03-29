@@ -1,0 +1,51 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/object1617013531.json",
+	"title": "Root",
+	"type": "array",
+	"default": [],
+	"items": {
+		"$id": "#root/items",
+		"title": "Items",
+		"type": "object",
+		"required": [
+			"name",
+			"color",
+			"prefix"
+		],
+		"properties": {
+			"name": {
+				"$id": "#root/items/name",
+				"title": "Name",
+				"type": "string",
+				"default": "",
+				"examples": [
+					"afk"
+				],
+				"pattern": "^.*$"
+			},
+			"color": {
+				"$id": "#root/items/color",
+				"title": "Color",
+				"type": "string",
+				"default": "",
+				"examples": [
+					"gold"
+				],
+				"pattern": "^.*$"
+			},
+			"prefix": {
+				"$id": "#root/items/prefix",
+				"title": "Prefix",
+				"type": "string",
+				"default": "",
+				"examples": [
+					"[afk]"
+				],
+				"pattern": "^.*$"
+			}
+		},
+		"additionalProperties": false
+	}
+}
