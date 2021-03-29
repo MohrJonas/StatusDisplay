@@ -158,6 +158,7 @@ public class StatusDisplay implements ModInitializer {
 		context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), teamJoinCommand);
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	private boolean hasPermission(CommandContext<ServerCommandSource> context) {
 		try {
 			if (context.getSource().getMinecraftServer().getPlayerManager().isOperator(context.getSource().getPlayer().getGameProfile())) {
