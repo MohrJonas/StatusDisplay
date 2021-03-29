@@ -1,9 +1,15 @@
 package com.github.nastygamer.statusdisplay;
 
-public interface Status {
+public abstract class Status {
 
-	String getColor();
-	String getPrefix();
-	String getName();
+	public abstract String getColor();
 
+	public abstract String getPrefix();
+
+	public abstract String getName();
+
+	@Override
+	public String toString() {
+		return String.format("%s  |  %s  |  %s  |", getName(), getColor(), getPrefix());
+	}
 }

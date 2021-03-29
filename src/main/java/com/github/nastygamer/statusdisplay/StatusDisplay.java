@@ -1,14 +1,11 @@
 package com.github.nastygamer.statusdisplay;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-
-import java.io.File;
-import java.net.URISyntaxException;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.word;
 import static net.minecraft.server.command.CommandManager.argument;
@@ -17,26 +14,63 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public class StatusDisplay implements ModInitializer {
 
-	private final ImmutableList<Status> statusList = ImmutableList.of(new AfkStatus(), new BusyStatus(), new OnlineStatus());
+	private static final String VERSION = "1.0.0";
+	private final StatusRegistry registry = new StatusRegistry();
 
 	@Override
 	public void onInitialize() {
-		System.out.println("Hello from StatusDisplay");
-		try {
-			System.out.println(new File(StatusDisplay.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		System.out.printf("Hello from StatusDisplay V.%s%n", VERSION);
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			dispatcher.register(
 					literal("status")
-							.then(argument("name", word()).executes(context -> {
-								if (statusList.stream().noneMatch(status -> status.getName().equals(context.getArgument("name", String.class))))
-									return 0;
-								moveIntoTeam(statusList.stream().filter(status -> status.getName().equals(context.getArgument("name", String.class))).findFirst().get(), context.getSource().getPlayer(), context);
-								return 1;
-							}))
+							.then(argument("name", word())
+									.executes(context -> {
+										final Status status = registry.getStatus(context.getArgument("name", String.class));
+										if (status != null) {
+											moveIntoTeam(status, context.getSource().getPlayer(), context);
+										}
+										return 0;
+									}))
 			);
+			dispatcher.register(
+					literal("statusnew")
+							.then(argument("name", word())
+									.then(argument("color", word())
+											.then(argument("prefix", word())
+													.executes(
+															context -> {
+																final Status status = registry.getStatus(context.getArgument("name", String.class));
+																if (status == null) {
+																	registry.addStatus(new Status() {
+																		@Override
+																		public String getColor() {
+																			return context.getArgument("color", String.class);
+																		}
+
+																		@Override
+																		public String getPrefix() {
+																			return context.getArgument("prefix", String.class);
+																		}
+
+																		@Override
+																		public String getName() {
+																			return context.getArgument("name", String.class);
+																		}
+																	});
+																}
+																return 0;
+															}
+													)))));
+			dispatcher.register(literal("statuslist").executes(context -> {
+				registry.getAll().forEach(status -> {
+					try {
+						context.getSource().getMinecraftServer().getCommandManager().execute(context.getSource().getMinecraftServer().getCommandSource(), String.format("msg %s %s", context.getSource().getPlayer().getName().asString(), status.toString()));
+					} catch (CommandSyntaxException e) {
+						e.printStackTrace();
+					}
+				});
+				return 0;
+			}));
 		});
 	}
 

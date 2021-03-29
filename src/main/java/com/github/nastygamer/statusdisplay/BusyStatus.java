@@ -1,6 +1,6 @@
 package com.github.nastygamer.statusdisplay;
 
-public class BusyStatus implements Status{
+public class BusyStatus extends Status {
 
 	@Override
 	public String getColor() {

@@ -1,6 +1,6 @@
 package com.github.nastygamer.statusdisplay;
 
-public class AfkStatus implements Status {
+public class AfkStatus extends Status {
 
 	@Override
 	public String getColor() {
